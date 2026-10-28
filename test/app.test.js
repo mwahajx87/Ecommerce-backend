@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 process.env.NODE_ENV = "test";
 process.env.JWT_SECRET = "test-only-secret-that-is-long-enough-123";
-process.env.FRONTEND_ORIGINS = "http://localhost:5173";
+process.env.FRONTEND_ORIGINS = "http://localhost:5173,https://admin-panel-e-commerce-dashboad.vercel.app";
 
 let app;
 let request;
@@ -25,6 +25,10 @@ test("CORS accepts only configured origins", async () => {
     .set("Origin", "http://localhost:5173")
     .expect(200)
     .expect("Access-Control-Allow-Origin", "http://localhost:5173");
+  await request(app).get("/api/health")
+    .set("Origin", "https://admin-panel-e-commerce-dashboad.vercel.app")
+    .expect(200)
+    .expect("Access-Control-Allow-Origin", "https://admin-panel-e-commerce-dashboad.vercel.app");
   await request(app).get("/api/health")
     .set("Origin", "https://not-allowed.example")
     .expect(403);

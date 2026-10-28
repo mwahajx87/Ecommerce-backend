@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import { env } from "./config/env.js";
+import { connectDatabase } from "./config/db.js";
 import { requireAuth, requireRole } from "./middleware/auth.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -34,6 +35,9 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+app.use("/api", (req, res, next) => {
+  connectDatabase().then(() => next(), next);
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", reviewRoutes);
@@ -42,3 +46,5 @@ app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/admin", requireAuth, requireRole("admin"), adminRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+export default app;

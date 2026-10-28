@@ -26,7 +26,7 @@ Run the database-backed integration suite with `npm run test:integration`. It us
 
 ## Configuration
 
-See [.env.example](./.env.example). `FRONTEND_ORIGINS` is a comma-separated CORS allow-list. For production, proxy each frontend's `/api/*` requests to this service and use `COOKIE_SAMESITE=lax`; direct cross-site requests require `COOKIE_SAMESITE=none` and HTTPS.
+See [.env.example](./.env.example). `FRONTEND_ORIGINS` is a comma-separated CORS allow-list; its defaults include the deployed website and admin origins from the PRD, plus local Vite origins. For production, proxy each frontend's `/api/*` requests to this service and use `COOKIE_SAMESITE=lax`; direct cross-site requests require `COOKIE_SAMESITE=none` and HTTPS.
 
 ## API
 

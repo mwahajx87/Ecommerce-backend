@@ -15,7 +15,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   MONGODB_URI: z.string().min(1).default("mongodb://127.0.0.1:27017/shopco"),
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
-  FRONTEND_ORIGINS: z.string().default("http://localhost:5173,http://localhost:5174"),
+  FRONTEND_ORIGINS: z.string().default(
+    "https://e-commerce-website-react-js-phi.vercel.app,https://admin-panel-e-commerce-dashboad.vercel.app,http://localhost:5173,http://localhost:5174"
+  ),
   COOKIE_SAMESITE: z.enum(["lax", "strict", "none"]).default("lax"),
   TRUST_PROXY: z.coerce.number().int().min(0).default(1),
   SEED_ADMIN_NAME: z.string().default("Store Admin"),
