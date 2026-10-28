@@ -1,16 +1,23 @@
 import { Router } from "express";
-import dashboardRoutes from "./dashboardRoutes.js";
-import orderRoutes from "./orderRoutes.js";
-import productRoutes from "./productRoutes.js";
-import userRoutes from "./userRoutes.js";
-import { isAdmin } from "../middleware/auth.js";
+import { createAdminProduct, deleteAdminProduct, listAdminProducts, updateAdminProduct } from "../controllers/productController.js";
+import { deleteAdminOrder, listAdminOrders, createAdminOrder, updateAdminOrder } from "../controllers/orderController.js";
+import { deleteUser, listUsers, updateUser } from "../controllers/userController.js";
+import { getMetrics } from "../controllers/dashboardController.js";
+import { validate } from "../middleware/validate.js";
+import { productSchema, productUpdateSchema, userUpdateSchema, orderSchema, orderStatusSchema } from "../validation/schemas.js";
 
 const router = Router();
-
-router.use(isAdmin);
-router.use("/products", productRoutes);
-router.use("/orders", orderRoutes);
-router.use("/users", userRoutes);
-router.use("/dashboard", dashboardRoutes);
+router.get("/products", listAdminProducts);
+router.post("/products", validate(productSchema), createAdminProduct);
+router.put("/products/:id", validate(productUpdateSchema), updateAdminProduct);
+router.delete("/products/:id", deleteAdminProduct);
+router.get("/orders", listAdminOrders);
+router.post("/orders", validate(orderSchema), createAdminOrder);
+router.patch("/orders/:id", validate(orderStatusSchema), updateAdminOrder);
+router.delete("/orders/:id", deleteAdminOrder);
+router.get("/users", listUsers);
+router.patch("/users/:id", validate(userUpdateSchema), updateUser);
+router.delete("/users/:id", deleteUser);
+router.get("/dashboard/metrics", getMetrics);
 
 export default router;

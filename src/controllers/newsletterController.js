@@ -1,20 +1,18 @@
-import { NewsletterSubscription } from "../models/NewsletterSubscription.js";
+import { Subscriber } from "../models/Subscriber.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { HttpError } from "../utils/httpError.js";
 
 export const subscribe = asyncHandler(async (req, res) => {
-  const email = String(req.body.email || "").trim().toLowerCase();
-  if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-    email.length > 254
-  ) {
-    throw new HttpError(400, "A valid email address is required.");
+  const existing = await Subscriber.exists({ email: req.body.email });
+  if (existing) {
+    return res.json({ message: "You are already subscribed" });
   }
-
-  await NewsletterSubscription.updateOne(
-    { email },
-    { $setOnInsert: { email } },
-    { upsert: true },
-  );
-  res.status(200).json({ message: "Thanks for subscribing." });
+  try {
+    await Subscriber.create({ email: req.body.email });
+  } catch (error) {
+    if (error.code === 11000 && error.keyPattern?.email) {
+      return res.json({ message: "You are already subscribed" });
+    }
+    throw error;
+  }
+  res.status(201).json({ message: "Subscribed successfully" });
 });
