@@ -52,6 +52,9 @@ app.use(
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
+app.get("/", (req, res) =>
+  res.json({ message: "Ecommerce API is running.", health: "/api/health" }),
+);
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 app.use(
   "/api/auth/login",

@@ -17,6 +17,15 @@ after(async () => {
   );
 });
 
+test("root endpoint describes the API and its health check", async () => {
+  const response = await fetch(baseUrl.replace(/\/api$/, ""));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    message: "Ecommerce API is running.",
+    health: "/api/health",
+  });
+});
+
 test("health endpoint is available without a database connection", async () => {
   const response = await fetch(`${baseUrl}/health`);
   assert.equal(response.status, 200);
