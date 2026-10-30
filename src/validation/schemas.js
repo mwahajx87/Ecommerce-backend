@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const email = z.string().trim().email().max(254).transform((value) => value.toLowerCase());
 const productId = z.string().trim().min(1).max(100);
+const maxImageLength = 3 * 1024 * 1024;
 
 export const registerSchema = z.object({
   name: z.string().trim().min(1).max(100),
@@ -27,7 +28,7 @@ export const productSchema = z.object({
   discount: z.number().nonnegative().optional(),
   stock: z.number().int().min(0),
   stockStatus: z.string().max(32).optional(),
-  image: z.string().trim().url().max(2048),
+  image: z.string().trim().url().max(maxImageLength),
   description: z.string().max(5000).default("")
 }).strict();
 
@@ -49,7 +50,7 @@ export const orderSchema = z.object({
     quantity: z.number().int().positive(),
     price: z.number().nonnegative().optional(),
     productName: z.string().max(200).optional(),
-    image: z.string().max(2048).optional(),
+    image: z.string().max(maxImageLength).optional(),
     color: z.string().max(100).optional(),
     size: z.string().max(100).optional()
   }).strict()).min(1).max(100)

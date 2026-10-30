@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { calculateOrderTotals } from "../src/services/orderService.js";
 import { deriveProductFields, getStockStatus } from "../src/services/productService.js";
-import { orderSchema, productUpdateSchema, registerSchema } from "../src/validation/schemas.js";
+import { orderSchema, productSchema, productUpdateSchema, registerSchema } from "../src/validation/schemas.js";
 
 test("order totals enforce tax rounding and shipping threshold", () => {
   assert.deepEqual(calculateOrderTotals([{ price: 1000, quantity: 2 }]), {
@@ -53,4 +53,16 @@ test("request schemas normalize emails and reject malformed input", () => {
   const updatedProduct = productUpdateSchema.parse({ id: "prod-1", name: "Updated Product" });
   assert.deepEqual(updatedProduct, { name: "Updated Product" });
   assert.equal(productUpdateSchema.safeParse({ id: "prod-1" }).success, false);
+});
+
+test("product schema accepts uploaded image data URLs up to the admin file-size limit", () => {
+  const result = productSchema.safeParse({
+    name: "Uploaded Image Product",
+    sku: "IMG-001",
+    category: "Fashion",
+    price: 100,
+    stock: 1,
+    image: `data:image/png;base64,${"a".repeat(2_796_204)}`
+  });
+  assert.equal(result.success, true);
 });

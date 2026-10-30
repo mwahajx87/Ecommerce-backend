@@ -20,6 +20,12 @@ test("health and unknown paths return JSON", async () => {
   });
 });
 
+test("JSON parser accepts image data URLs up to the admin file-size limit", async () => {
+  await request(app).post("/unknown")
+    .send({ image: `data:image/png;base64,${"a".repeat(2_796_204)}` })
+    .expect(404);
+});
+
 test("CORS accepts only configured origins", async () => {
   await request(app).get("/api/health")
     .set("Origin", "http://localhost:5173")
