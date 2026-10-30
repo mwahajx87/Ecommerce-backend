@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { calculateOrderTotals } from "../src/services/orderService.js";
 import { deriveProductFields, getStockStatus } from "../src/services/productService.js";
-import { orderSchema, registerSchema } from "../src/validation/schemas.js";
+import { orderSchema, productUpdateSchema, registerSchema } from "../src/validation/schemas.js";
 
 test("order totals enforce tax rounding and shipping threshold", () => {
   assert.deepEqual(calculateOrderTotals([{ price: 1000, quantity: 2 }]), {
@@ -49,4 +49,8 @@ test("request schemas normalize emails and reject malformed input", () => {
     customerAddress: "1 Main Street",
     items: [{ productId: "prod-1", quantity: 1, price: 0.01 }]
   }).success, true);
+
+  const updatedProduct = productUpdateSchema.parse({ id: "prod-1", name: "Updated Product" });
+  assert.deepEqual(updatedProduct, { name: "Updated Product" });
+  assert.equal(productUpdateSchema.safeParse({ id: "prod-1" }).success, false);
 });

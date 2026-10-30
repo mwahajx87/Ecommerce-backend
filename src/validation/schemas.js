@@ -31,7 +31,8 @@ export const productSchema = z.object({
   description: z.string().max(5000).default("")
 }).strict();
 
-export const productUpdateSchema = productSchema.omit({ id: true }).partial().strict()
+export const productUpdateSchema = productSchema.partial().strict()
+  .transform(({ id, ...value }) => value)
   .refine((value) => Object.keys(value).length > 0, "At least one field is required");
 
 export const orderSchema = z.object({
